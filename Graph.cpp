@@ -56,6 +56,7 @@ void Graph::graphPfEquation( PfEquation equation )  // PUBLIC
 	
 		// Plot the point
 		plotPt( xPos, yPos );
+//		plotPt( xPos + 2, yPos ); // DEBUG
 		
 		// Generate vertical lines (skip first point)
 		if( xPos != -1 )
@@ -153,36 +154,46 @@ void Graph::genVertLines( int xPos, int yPos )
 		return;
 	}
 
-	// Used for symmetry, denotes whether the current point's x value is positive
-	bool currXpositive = xPos > centerPt[0];
-	
+	// Create vars for line
 	int startY;  // inclusive
-	int startX;
 	int endY;  // exclusive
 	int middleY;
+	int startX;
+	int endX;
 
 	// Set vars for creating vertical line
 	if( yDiff > 0 )  // positive slope
 	{
 		startY = yPos + 1;
-		startX = xPos;
+		middleY = startY + yDiff / 2;
 		endY = prevPt[1];
+		
+		startX = xPos;
+		endX = startX - 1;
 	}
 	else  // negative slope
 	{
 		startY = prevPt[1] + 1;
-		startX = prevPt[0];
+		middleY = startY - yDiff / 2;
 		endY = yPos;
+		
+		startX = prevPt[0];
+		endX = startX + 1;
+
 	}
-	
-	middleY = startY + yDiff / 2;
-	
+
+	// Fixes symmetry issues along y-axis
+	if( yPos < centerPt[1] && yDiff % 2 == 0 ) // y is positive and yDiff is even
+	{
+		middleY--;
+	}
+
 	// Create vert line
 	for( int i = startY; i < endY; i++)
 	{
 		if( i >= middleY )
 		{
-			plotPt( startX + 1, i );
+			plotPt( endX, i );
 		}
 		else
 		{
