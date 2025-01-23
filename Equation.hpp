@@ -16,7 +16,7 @@
 class Equation
 {
 private:
-	int precedence( char op );
+	int precedence( std::string op );
 
 protected:
 	std::string equation;
@@ -27,7 +27,8 @@ public:
 	bool isNum( char c );
 	bool isNumStart( char c );
 	bool isVariable( char c );
-	bool hasPrecedence( char op1, char op2 );
+	bool isFunction( std::string function );
+	bool hasPrecedence( std::string op1, std::string op2 );
 	double performOperation( char op, double term1, double term2 );
 };
 
@@ -36,7 +37,7 @@ public:
 class InfEquation : public Equation
 {
 private:
-	void printStack( std::stack<char> &myStack )
+/*	void printStack( std::stack<char> &myStack )
 	{
 		std::stack<char> buffer;
 
@@ -51,8 +52,9 @@ private:
 			myStack.push( buffer.top() );
 			buffer.pop();
 		}   
-	}
+	}*/
 	
+	bool isLetter( char c );
 	bool checkImplyMultiply( int startIndex );
 //	std::string equation;
 	
@@ -74,6 +76,7 @@ class PfEquation : public Equation
 {
 private:
 	std::string replaceVar( double varVal );
+	double evalFunction( std::string function, double num );
 
 public:
 	// LATER ADD ERROR HANDLING TO CONSTRUCTOR

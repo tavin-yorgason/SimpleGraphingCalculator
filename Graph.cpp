@@ -117,13 +117,15 @@ void Graph::plotPt( int xPos, int yPos )
 	if( isPtOnGraph( xPos, yPos ) )
 	{
 		// Place point on graph
-		if( isAxisChar( graph[ yPos ][ xPos ] ) )
+		char *point = &graph[ yPos ][ xPos ];
+
+		if( isAxisChar( *point ) || *point == '0' )
 		{
-			graph[ yPos ][ xPos ] = '0';
+			*point = '0';
 		}
 		else
 		{
-			graph[ yPos ][ xPos ] = 'O';
+			*point = 'O';
 		}
 	}
 }

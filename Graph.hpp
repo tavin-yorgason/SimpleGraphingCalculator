@@ -12,8 +12,8 @@
 // Graph variables
 const int X_SCALE = 5;
 const int Y_SCALE = 5;
-const int GRAPH_WIDTH = 191; // in chars
-const int GRAPH_HEIGHT = 87; // in chars
+const int GRAPH_WIDTH = 189; // in chars
+const int GRAPH_HEIGHT = 85; // in chars
 
 // Graph definition
 class Graph
