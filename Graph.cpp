@@ -48,23 +48,27 @@ void Graph::graphPfEquation( PfEquation equation )  // PUBLIC
 	{
 		// Get the x value from its position
 		double xVal = xPosToValue( xPos );
-		cout << "xVal: " << xVal << "\n";
+//		cout << "xVal: " << xVal << "\n";
 		
 		// Solve the equation with the x value and convert to y position
-		double yVal = equation.solve( xPosToValue( xPos ) );
-		int yPos = yValToPos( yVal );
-	
-		// Plot the point
-		plotPt( xPos, yPos );
-//		plotPt( xPos + 2, yPos ); // DEBUG
-		
-		// Generate vertical lines (skip first point)
-		if( xPos != -1 )
+		bool validResult = true;
+		double yVal = equation.solve( xPosToValue( xPos ), validResult );
+		if( validResult )
 		{
-			genVertLines( xPos, yPos );
+			int yPos = yValToPos( yVal );
+		
+			// Plot the point
+			plotPt( xPos, yPos );
+//			plotPt( xPos + 2, yPos ); // DEBUG
+			
+			// Generate vertical lines (skip first point)
+			if( xPos != -1 )
+			{
+				genVertLines( xPos, yPos );
+			}
+			prevPt[0] = xPos;
+			prevPt[1] = yPos;
 		}
-		prevPt[0] = xPos;
-		prevPt[1] = yPos;
 	}
 
 	print();
@@ -133,7 +137,7 @@ void Graph::plotPt( int xPos, int yPos )
 // Checks if a point is on the graph
 bool Graph::isPtOnGraph( int xPos, int yPos )
 {
-	cout << "Is (" << xPos << ", " << yPos << ") on the graph?\n\n";
+//	cout << "Is (" << xPos << ", " << yPos << ") on the graph?\n\n";
 	
 	if( ( 0 <= yPos && yPos < GRAPH_HEIGHT )
 	 && ( 0 <= xPos && xPos < GRAPH_WIDTH ) )
@@ -152,7 +156,7 @@ void Graph::genVertLines( int xPos, int yPos )
 	// Return if both curr and prev points are outside of the graph
 	if( !isPtOnGraph( xPos, yPos ) && !isPtOnGraph( prevPt[0], prevPt[1] ) )
 	{
-		cout << "No vertical line\n";
+//		cout << "No vertical line\n";
 		return;
 	}
 

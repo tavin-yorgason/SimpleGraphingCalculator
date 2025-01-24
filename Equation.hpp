@@ -84,6 +84,6 @@ public:
 	~PfEquation();
 
 	
-	double solve( double x );
+	double solve( double x, bool &validResult );
 };
 

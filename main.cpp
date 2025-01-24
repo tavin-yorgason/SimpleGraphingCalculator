@@ -5,11 +5,17 @@
  * By Tavin Yorgason
  * 
  * To do:
- *  - Connect dots
- *	- Add commands to change graph variables (must also make graph dynamic).
- *  - Add error handling to Equation constructors.
- *  - Add protections against converting infToPf() more than once.
- *
+ *	 - Add commands to change graph variables (must also make graph dynamic).
+ *     - Translate
+ *     - Scale
+ *       - Uniform scaling
+         - Scale x/y separately
+ *     - Auto
+ *   - Add error handling to Equation constructors.
+ *   - Add protections against converting infToPf() more than once.
+ *   - Make command to switch between radian and degree mode.
+ *   - Allow multiple equations on the screen at once.
+ *   - 
  ******************************************************************************/
 
 #include <iostream>

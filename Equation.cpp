@@ -4,9 +4,7 @@
  * Member functions for Equation, PfEquation, and InfixEquation.
  * By Tavin Yorgason
  *
- * ISSUES:
- *  - Multiplication and division are evaluated from right to left instead of
- *    left to right.
+ * To do:
  *
  ******************************************************************************/
 
@@ -47,7 +45,7 @@ bool Equation::isNum( char c )
 // Returns true if op1 has precedence over op2
 bool Equation::hasPrecedence( string op1, string op2 )
 {
-	if( precedence( op1 ) > precedence( op2 ) )
+	if( precedence( op1 ) >= precedence( op2 ) )
 	{
 		return true;
 	}
@@ -57,8 +55,12 @@ bool Equation::hasPrecedence( string op1, string op2 )
 // Returns the precendence level of the operator
 int Equation::precedence( string op )  // PRIVATE
 {
-	cout << "op: " << op << endl;
-	if( op == "+" || op == "-" || op == "(" )
+//	cout << "[precedence] op: " << op << endl;
+	if( op == "(" )
+	{
+		return -1;
+	}
+	else if( op == "+" || op == "-" )
 	{
 		return 0;
 	}
@@ -334,7 +336,7 @@ string InfEquation::infixToPostfix()
 		{
 			// If any operators on the stack have a higher precedence than the
 			// current operator, place them in the postfix equation.
-			cout << "Found an op: " << equation[i] << endl;
+//			cout << "[infToPf::Operators] Found an op: " << equation[i] << endl;
 			while( !opStack.empty()			 // Convert char to string
 				&& hasPrecedence( opStack.top(), string("") + equation[i] ) )
 			{
@@ -457,7 +459,7 @@ PfEquation::~PfEquation()
 // Returns the solution to the PfEquation.
 // Potential error: top of stack is checked without checking to see if stack is
 // empty or not.
-double PfEquation::solve( double varVal )
+double PfEquation::solve( double varVal, bool &validResult )
 {
 	stack<double> numStack;
 
@@ -505,13 +507,24 @@ double PfEquation::solve( double varVal )
 			numStack.pop();
 
 			// Evaluate expression and put on stack
-			numStack.push( performOperation( noVarEq[i], num1, num2 ) );
+			double result = performOperation( noVarEq[i], num1, num2 ); 
+//			cout << "[PfEquation::solve()] " << num1 << noVarEq[i] << num2 << "\n";
+			numStack.push( result );
+
+			// Abort if the result isn't valid (ex: divide by zero)
+			if( !isfinite( result ) )
+			{
+				validResult = false;
+				break;
+			}
 		}
 		/* ----- Functions ----- */
 		else if( noVarEq.length() >= i + 3
 			  && isFunction( noVarEq.substr( i, 3 ) ) )
 		{
-			double eval = evalFunction( noVarEq.substr( i, 3 ), numStack.top() );
+			string function = noVarEq.substr( i, 3 );
+			double eval = evalFunction( function, numStack.top() );
+//			cout << "[PfEquation::solve()] " << function << "(" << numStack.top() << ")\n";
 			numStack.pop();
 
 			numStack.push( eval );
@@ -530,6 +543,7 @@ double PfEquation::solve( double varVal )
 	}
 
 	// Return result
-	return numStack.top();
+//	cout << "[PfEquation::solve()] yVal: " << numStack.top() << endl;
+	return numStack.top(); // memory leak or nah?
 }
 
