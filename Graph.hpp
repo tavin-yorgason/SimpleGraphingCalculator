@@ -22,6 +22,10 @@ private:
 	// MAKE DYNAMIC LATER
 	char graph[ GRAPH_HEIGHT ][ GRAPH_WIDTH ];
 	
+	// For multiple equations on one graph
+	int numEquations = 0;
+
+	// Functions
 	double xPosToValue( int xPos );
 	int yValToPos( double yVal );
 	
@@ -31,12 +35,13 @@ private:
 	int centerPt[2];
 	void genVertLines( int xInt, int yInt );
 
-	void setupGraph();
-	bool isAxisChar( char c );
+//	bool isAxisChar( char c );
 
 	void print();
 
 public:
+	Graph();
+	void setupGraph();
 	void graphPfEquation( PfEquation equation );
 };
 

@@ -5,7 +5,6 @@
  * Graph function definitions.
  * 
  * To do:
- *  - Sometimes the last point shows up on the left side of the graph??
  ******************************************************************************/
 
 #include <iostream>
@@ -14,14 +13,11 @@
 
 using namespace std;
 
-// Returns true if a char is an axis char
-bool Graph::isAxisChar( char c )
+// Constructor
+Graph::Graph()
 {
-	if( c == '|' || c == '-' || c == '+' )
-	{
-		return true;
-	}
-	return false;
+	// Clear the graph and add axis
+	setupGraph();
 }
 
 // Prints the graph
@@ -40,8 +36,8 @@ void Graph::print()
 // Graphs a postfix equation
 void Graph::graphPfEquation( PfEquation equation )  // PUBLIC
 {
-	// Clear the graph and add axis
-	setupGraph();
+	// Increment equation counter
+	numEquations++;
 
 	// Loop through every column including 1 column off-screen each side
 	for( int xPos = -1; xPos < GRAPH_WIDTH + 1; xPos++ )
@@ -71,6 +67,7 @@ void Graph::graphPfEquation( PfEquation equation )  // PUBLIC
 		}
 	}
 
+	// Print result
 	print();
 }
 
@@ -122,15 +119,7 @@ void Graph::plotPt( int xPos, int yPos )
 	{
 		// Place point on graph
 		char *point = &graph[ yPos ][ xPos ];
-
-		if( isAxisChar( *point ) || *point == '0' )
-		{
-			*point = '0';
-		}
-		else
-		{
-			*point = 'O';
-		}
+		*point = numEquations + '0';
 	}
 }
 
@@ -185,7 +174,6 @@ void Graph::genVertLines( int xPos, int yPos )
 		
 		startX = prevPt[0];
 		endX = startX + 1;
-
 	}
 
 	// Fixes symmetry issues along y-axis
@@ -211,6 +199,9 @@ void Graph::genVertLines( int xPos, int yPos )
 // Clears the graph and adds axis
 void Graph::setupGraph()
 {
+	// Reset number of equations on graph
+	numEquations = 0;
+
 	// The -1 from height and width are to account for indices starting at 0
 	centerPt[0] = ( GRAPH_WIDTH - 1 ) / 2;
 	centerPt[1] = ( GRAPH_HEIGHT - 1 ) / 2;

@@ -5,6 +5,7 @@
  * By Tavin Yorgason
  *
  * To do:
+ *   - Fix math functions so that it allows functions that don't have 3 letters.
  *
  ******************************************************************************/
 
