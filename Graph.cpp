@@ -5,9 +5,10 @@
  * Graph function definitions.
  * 
  * To do:
- *  - Change lines to be different colors instead of different numbers.
  *  - Move the viewing window around
  *  - Add '+'s to mark coordinates
+ *  - Instead of calculating the x value every time, calculate the x distance
+ *    between two points.
  ******************************************************************************/
 
 #include <iostream>
@@ -106,14 +107,15 @@ void Graph::graphPfEquation( PfEquation equation )  // PUBLIC
 			plotPt( xPos, yPos );
 //			plotPt( xPos + 2, yPos ); // DEBUG
 			
-			// Generate vertical lines (skip first point)
-			if( xPos != -1 )
+			// Generate vertical lines
+			if( prevPtValid )
 			{
 				genVertLines( xPos, yPos );
 			}
 			prevPt[0] = xPos;
 			prevPt[1] = yPos;
 		}
+		prevPtValid = validResult;
 	}
 
 	// Print result

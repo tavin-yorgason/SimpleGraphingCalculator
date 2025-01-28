@@ -61,7 +61,7 @@ int main()
 	toLower( input );
 
 	// Input loop
-	while( input != "quit" )
+	while( input != "quit" && input != "exit" )
 	{
 		int inputLen = input.length();
 
