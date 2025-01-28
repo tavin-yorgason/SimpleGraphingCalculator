@@ -6,7 +6,7 @@
  *
  * To do:
  *   - Fix math functions so that it allows functions that don't have 3 letters.
- *
+ *   - Allow '-' for neg nums instead of requiring '~'
  ******************************************************************************/
 
 #include <iostream>
@@ -213,7 +213,7 @@ bool InfEquation::checkImplyMultiply( int startIndex )  // PRIVATE
 	// Add * if it implies multiplication
 	if( isNumStart( c ) || isLetter( c ) || c == '(' )
 	{
-//		cout << "yes\n";
+		// EDITS INF EQUATION, MAKES IT UNUSEABLE
 		equation[startIndex - 1] = '*';
 		return true;
 	}
@@ -295,7 +295,7 @@ string InfEquation::infixToPostfix()
 		{
 			// Used to prevent multiple periods in a number
 			bool hasPeriod = false;
-
+			
 			// Check if the number is negative (~ means negative)
 			if( equation[i] == '~' )
 			{
@@ -319,10 +319,18 @@ string InfEquation::infixToPostfix()
 					hasPeriod = true;
 				}
 
+				
+
 				pfEquation += equation[i];
 				i++;
 			}
 			i--;
+
+			// Adds implied coefficient of one in case of ~(...)
+			if( equation[i] == '~' )
+			{
+				pfEquation += '1';
+			}
 
 			pfEquation += ' ';
 
@@ -368,7 +376,6 @@ string InfEquation::infixToPostfix()
 		}
 	}
 
-	equation = ""; // clear the equation so it's not mistaken as infix
 	return pfEquation;
 }
 

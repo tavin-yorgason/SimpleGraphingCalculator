@@ -23,6 +23,7 @@ protected:
 
 public:
 	std::string getEquation() { return equation; }
+	void setEquation( std::string equationIn ) { equation = equationIn; }
 	bool isOperator( char c );
 	bool isNum( char c );
 	bool isNumStart( char c );
@@ -62,6 +63,7 @@ private:
 
 public:
 	// LATER ADD ERROR HANDLING TO CONSTRUCTOR
+	InfEquation() { equation = ""; }
 	InfEquation( std::string equationIn ) { equation = equationIn; }
 	~InfEquation();
 
@@ -80,6 +82,7 @@ private:
 
 public:
 	// LATER ADD ERROR HANDLING TO CONSTRUCTOR
+	PfEquation() { equation = ""; }
 	PfEquation( std::string equationIn ) { equation = equationIn; }
 	~PfEquation();
 

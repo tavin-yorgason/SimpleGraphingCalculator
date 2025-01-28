@@ -5,6 +5,9 @@
  * Graph function definitions.
  * 
  * To do:
+ *  - Change lines to be different colors instead of different numbers.
+ *  - Move the viewing window around
+ *  - Add '+'s to mark coordinates
  ******************************************************************************/
 
 #include <iostream>
@@ -20,14 +23,53 @@ Graph::Graph()
 	setupGraph();
 }
 
+// Scales the graph and reprints it
+void Graph::scale( double multiplier )
+{
+	regraphing = true;
+
+	// Change scale and clear graph
+	xScale *= multiplier;
+	yScale *= multiplier;
+	setupGraph();
+
+	// Replot all equations
+	int numEquationsSave = numEquations;
+	numEquations = 0;
+	for( int i = 0; i < numEquationsSave; i++ )
+	{
+		graphPfEquation( equations[i].getEquation() );
+	}
+
+	// Print new graph
+	print();
+	
+	regraphing = false;
+}
+
 // Prints the graph
 void Graph::print()
 {
+	cout << "GRAPH\n";
 	for( int r = 0; r < GRAPH_HEIGHT; r++ )
 	{
 		for( int c = 0; c < GRAPH_WIDTH; c++ )
 		{
-			cout << graph[r][c];
+			char gChar = graph[r][c];
+			
+			// Change color of text for different lines
+			if( '1' <= gChar && gChar <= '9' )
+			{
+				// Color loops through red, green, yellow, blue, magenta, cyan,
+				// and white
+				int color = 31 + ( gChar - '0' - 1 ) % 7;
+				cout << "\033[" << color << "mO";
+			}
+			else
+			{
+				cout << "\033[0m" << gChar;
+			}
+	
 		}
 		cout << '\n';
 	}
@@ -36,16 +78,23 @@ void Graph::print()
 // Graphs a postfix equation
 void Graph::graphPfEquation( PfEquation equation )  // PUBLIC
 {
-	// Increment equation counter
+	// Return if too many equations
+	if( numEquations == MAX_EQUATIONS - 1 )
+	{
+		cout << "ERROR: Too many equations.\n";
+		return;
+	}
+
+	// Add equation to equations list if not regraphing
+	if( !regraphing )
+	{
+		equations[ numEquations ] = equation;
+	}
 	numEquations++;
 
 	// Loop through every column including 1 column off-screen each side
 	for( int xPos = -1; xPos < GRAPH_WIDTH + 1; xPos++ )
 	{
-		// Get the x value from its position
-		double xVal = xPosToValue( xPos );
-//		cout << "xVal: " << xVal << "\n";
-		
 		// Solve the equation with the x value and convert to y position
 		bool validResult = true;
 		double yVal = equation.solve( xPosToValue( xPos ), validResult );
@@ -68,7 +117,10 @@ void Graph::graphPfEquation( PfEquation equation )  // PUBLIC
 	}
 
 	// Print result
-	print();
+	if( !regraphing )
+	{
+		print();
+	}
 }
 
 // Converts an x position in the graph array to an x value
@@ -81,7 +133,7 @@ double Graph::xPosToValue( int xPos )
 	xVal -= GRAPH_WIDTH / 2.0;
 
 	// Scale
-	xVal *= (double) X_SCALE / GRAPH_WIDTH;
+	xVal *= (double) xScale / GRAPH_WIDTH;
 
 	return xVal;
 }
@@ -90,7 +142,7 @@ double Graph::xPosToValue( int xPos )
 int Graph::yValToPos( double yVal )
 {
 	// Scale to graph size
-	yVal *= ( (double) GRAPH_HEIGHT / Y_SCALE );
+	yVal *= ( (double) GRAPH_HEIGHT / yScale );
 	
 	// Round to nearest int
 	int yPos;
@@ -196,16 +248,26 @@ void Graph::genVertLines( int xPos, int yPos )
 	}
 }
 
+// Clear equations
+void Graph::clearEquations()
+{
+	for( int i = 0; i < numEquations; i++ )
+	{
+		equations[i].setEquation( "" );
+	}
+	numEquations = 0;
+}
+
+// Resets equations, but not scale
+void Graph::resetGraph()
+{
+	setupGraph();
+	clearEquations();
+}
+
 // Clears the graph and adds axis
 void Graph::setupGraph()
 {
-	// Reset number of equations on graph
-	numEquations = 0;
-
-	// The -1 from height and width are to account for indices starting at 0
-	centerPt[0] = ( GRAPH_WIDTH - 1 ) / 2;
-	centerPt[1] = ( GRAPH_HEIGHT - 1 ) / 2;
-
 	// Clear graph
 	for( int r = 0; r < GRAPH_HEIGHT; r++ )
 	{
@@ -218,13 +280,13 @@ void Graph::setupGraph()
 	// y axis
 	for( int r = 0; r < GRAPH_HEIGHT; r++ )
 	{
-		graph[r][ ( GRAPH_WIDTH - 1 ) / 2 ] = '|';
+		graph[r][ centerPt[0] ] = '|';
 	}
 	
 	// x axis
 	for( int c = 0; c < GRAPH_WIDTH; c++ )
 	{
-		graph[ ( GRAPH_HEIGHT - 1 ) / 2 ][c] = '-';
+		graph[ centerPt[1] ][c] = '-';
 	}
 
 	// Center point

@@ -9,13 +9,13 @@
  *     - Translate
  *     - Scale
  *       - Uniform scaling
-         - Scale x/y separately
+ *       - Scale x/y separately
  *     - Auto
  *   - Add error handling to Equation constructors.
  *   - Add protections against converting infToPf() more than once.
  *   - Make command to switch between radian and degree mode.
- *   - Allow multiple equations on the screen at once.
  *   - 
+ *
  ******************************************************************************/
 
 #include <iostream>
@@ -63,13 +63,17 @@ int main()
 	// Input loop
 	while( input != "quit" )
 	{
+		int inputLen = input.length();
+
+		// Find command
 		if( input == "help" )
 		{
 			printCommands();
 		}
 		else if( input == "new" )
 		{
-			graph.setupGraph();
+			graph.resetGraph();
+			cout << "Graph reset\n";
 		}
 		else if( input == "plot" )
 		{
@@ -83,9 +87,13 @@ int main()
 			cout << "Postfix equation: " << equation.getEquation() << endl;
 
 			// Graph the result
-			cout << "Graph:\n";
 			graph.graphPfEquation( equation );
 			cout << "\n";
+		}
+		else if( inputLen > 6 && input.compare( 0, 6, "scale " ) == 0 )
+		{
+			double multiplier = stod( input.substr( 6, inputLen - 6 ) );
+			graph.scale( multiplier );
 		}
 		else
 		{
@@ -124,6 +132,7 @@ void printCommands()
 	cout << "COMMANDS\n"
 		 << " - 'exit': Exits the program\n"
 		 << " - 'new': Creates a new graph\n"
-		 << " - 'plot': Prompts for an equation to plot on the graph\n\n";
+		 << " - 'plot': Prompts for an equation to plot on the graph\n"
+		 << " - 'zoom X.X': Zooms in or out by the amount specified\n\n";
 }
 
