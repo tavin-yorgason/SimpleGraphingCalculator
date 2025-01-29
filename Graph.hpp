@@ -30,7 +30,7 @@ private:
 	int xScale = 5;
 
 	// Translation
-	bool prevPtValid = true;
+	bool prevPtValid = false;
 	int prevPt[2];
 	int centerPt[2] = { ( GRAPH_WIDTH - 1 ) / 2,
 						( GRAPH_HEIGHT - 1 ) / 2 };

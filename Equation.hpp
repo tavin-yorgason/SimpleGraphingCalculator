@@ -25,6 +25,7 @@ public:
 	std::string getEquation() { return equation; }
 	void setEquation( std::string equationIn ) { equation = equationIn; }
 	bool isOperator( char c );
+	bool isLetter( char c );
 	bool isNum( char c );
 	bool isNumStart( char c );
 	bool isVariable( char c );
@@ -55,7 +56,6 @@ private:
 		}   
 	}*/
 	
-	bool isLetter( char c );
 	bool checkImplyMultiply( int startIndex );
 //	std::string equation;
 	

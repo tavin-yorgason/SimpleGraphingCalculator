@@ -43,6 +43,16 @@ bool Equation::isNum( char c )
 	return false;
 }
 
+// Returns true if the char is a letter
+bool Equation::isLetter( char c )
+{
+	if( 'a' <= c && c <= 'z' )
+	{
+		return true;
+	}
+	return false;
+}
+
 // Returns true if op1 has precedence over op2
 bool Equation::hasPrecedence( string op1, string op2 )
 {
@@ -177,16 +187,6 @@ InfEquation::~InfEquation()
 
 //string InfEquation::getEquation() { return equation; }
 
-// Returns true if the char is a letter
-bool InfEquation::isLetter( char c )  // PRIVATE
-{
-	if( ( 'a' <= c && c <= 'z' )
-	 || ( 'A' <= c && c <= 'Z' ) )
-	{
-		return true;
-	}
-	return false;
-}
 
 // Checks if equation[startIndex] is a character that can imply multiplication.
 // If so, set the previous char to a *. Then, the loop that calls this function
@@ -319,8 +319,6 @@ string InfEquation::infixToPostfix()
 					hasPeriod = true;
 				}
 
-				
-
 				pfEquation += equation[i];
 				i++;
 			}
@@ -358,14 +356,35 @@ string InfEquation::infixToPostfix()
 //			cout << "pfEquation: " << pfEquation << endl;
 		}
 		/* ----- Functions ----- */
-		else if( equation.length() >= i + 3
-			  && isFunction( equation.substr( i, 3 ) ) )
+		else if( isLetter( equation[i] ) )
 		{
+			// Get full function
+			int funcStart = i;
+			int funcLength = 1;
+			i++;
+			// MAY CAUSE ISSUES IF VARIABLE IS CHANGED TO A LETTER THAT'S ALSO
+			// IN A MATH FUNCTION NAME
+			while( i < equation.length() && isLetter( equation[i] )
+				&& equation[i] != VARIABLE )
+			{
+				funcLength++;
+				i++;
+			}
+			i--;
+
+			string function = equation.substr( funcStart, funcLength );
+
 			// Functions have a higher precedence than operators
-			opStack.push( equation.substr( i, 3 ) );
-			
-			// Adjust index to skip over the rest of the function name
-			i += 2;
+			if( isFunction( function ) )
+			{
+				opStack.push( function );
+			}
+			else
+			{
+				cout << "[InfEquation::infixToPostFix] Invalid function: "
+					 << function << "\n";
+				exit(1);
+			}
 		}
 		/* ----- Spaces ----- */
 		else if( equation[i] != ' ' )
@@ -386,7 +405,7 @@ string InfEquation::infixToPostfix()
 // Evaluates a number in a given mathematical function
 double PfEquation::evalFunction( string function, double num ) // PRIVATE
 {
-	if( function == "sqrt" ) // can never be sqrt since function is 3 char
+	if( function == "sqrt" ) 
 	{
 		return pow( num, 0.5 );
 	}
@@ -527,18 +546,43 @@ double PfEquation::solve( double varVal, bool &validResult )
 			}
 		}
 		/* ----- Functions ----- */
-		else if( noVarEq.length() >= i + 3
-			  && isFunction( noVarEq.substr( i, 3 ) ) )
+		else if( isLetter( noVarEq[i] ) )
 		{
-			string function = noVarEq.substr( i, 3 );
-			double eval = evalFunction( function, numStack.top() );
-//			cout << "[PfEquation::solve()] " << function << "(" << numStack.top() << ")\n";
-			numStack.pop();
-
-			numStack.push( eval );
+			// Get full function
+			int funcStart = i;
+			int funcLength = 1;
+			i++;
 			
-			// Adjust index to skip over the rest of the function name
-			i += 2;
+			while( i < noVarEq.length() && noVarEq[i] != ' ' )
+			{
+				funcLength++;
+				i++;
+			}
+			i--;
+
+			string function = noVarEq.substr( funcStart, funcLength );
+
+			// Functions have a higher precedence than operators
+			if( isFunction( function ) )
+			{
+				// Abort if the result isn't valid (ex: divide by zero)
+				double eval = evalFunction( function, numStack.top() );
+				if( !isfinite( eval ) )
+				{
+					validResult = false;
+					break;
+				}
+				
+				numStack.pop();
+				numStack.push( eval );
+			}
+			else
+			{
+				cout << "[PfEquation::infixToPostFix] Invalid function: "
+					 << function << "\n";
+				exit(1);
+			}
+			
 		}
 		/* ----- Spaces ----- */
 		else if( noVarEq[i] != ' ' )

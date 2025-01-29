@@ -14,7 +14,7 @@
  *   - Add error handling to Equation constructors.
  *   - Add protections against converting infToPf() more than once.
  *   - Make command to switch between radian and degree mode.
- *   - 
+ *   - Consider changing for loops to use size_t instead of int.
  *
  ******************************************************************************/
 
