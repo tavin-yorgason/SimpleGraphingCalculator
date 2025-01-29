@@ -64,11 +64,11 @@ void Graph::print()
 				// Color loops through red, green, yellow, blue, magenta, cyan,
 				// and white
 				int color = 31 + ( gChar - '0' - 1 ) % 7;
-				cout << "\033[" << color << "mO";
+				cout << "\033[" << color << "mo\033[0m";
 			}
 			else
 			{
-				cout << "\033[0m" << gChar;
+				cout << gChar;
 			}
 	
 		}

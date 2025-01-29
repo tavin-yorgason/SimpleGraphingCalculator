@@ -191,8 +191,10 @@ InfEquation::~InfEquation()
 // Checks if equation[startIndex] is a character that can imply multiplication.
 // If so, set the previous char to a *. Then, the loop that calls this function
 // checks the char again and treats it like any normal operator.
-bool InfEquation::checkImplyMultiply( int startIndex )  // PRIVATE
+void InfEquation::checkImplyMultiply( int startIndex )  // PRIVATE
 {
+	implyMultiply = false;
+	
 	// Skip spaces
 	char c = equation[startIndex];
 	int i = startIndex;
@@ -203,22 +205,19 @@ bool InfEquation::checkImplyMultiply( int startIndex )  // PRIVATE
 		// Check for bounds
 		if( i >= equation.size() )
 		{
-			return false;
+			return;
 		}
 
 		c = equation[i];
 	}
 
 //	cout << "Does " << c << " imply multiplication? ";
-	// Add * if it implies multiplication
 	if( isNumStart( c ) || isLetter( c ) || c == '(' )
 	{
-		// EDITS INF EQUATION, MAKES IT UNUSEABLE
-		equation[startIndex - 1] = '*';
-		return true;
+//		equation[startIndex - 1] = '*';
+		implyMultiply = true;
 	}
 //	cout << endl;
-	return false;
 }
 
 // Convert an equation from infix to postfix. Deals with spaces.
@@ -240,9 +239,36 @@ string InfEquation::infixToPostfix()
 	{
 //		cout << "Checking " << equation[i] << endl;
 //		cout << "is it a numstart " << isNumStart( equation[i] ) << endl;
+		
+		/* ----- Operators ----- */
+		if( isOperator( equation[i] ) || implyMultiply )
+		{
+			// Insert * if implied multiplication
+			char op = equation[i];
+			if( implyMultiply )
+			{
+				implyMultiply = false;
+				
+				op = '*';
+				i--;
+			}
 
+			// If any operators on the stack have a higher precedence than the
+			// current operator, place them in the postfix equation.
+//			cout << "[infToPf::Operators] Found an op: " << equation[i] << endl;
+			while( !opStack.empty()			 // Convert char to string
+				&& hasPrecedence( opStack.top(), string("") + op ) )
+			{
+				pfEquation += opStack.top();
+				pfEquation += ' ';
+				opStack.pop();
+			}
+
+			opStack.push( string("") + op );
+//			cout << "pfEquation: " << pfEquation << endl;
+		}
 		/* ----- Parentheses ----- */
-		if( equation[i] == '(' )
+		else if( equation[i] == '(' )
 		{
 			opStack.push( "(" );
 		}
@@ -262,13 +288,7 @@ string InfEquation::infixToPostfix()
 			opStack.pop();
 			
 			// Check for implied multiplication
-			if( checkImplyMultiply( i + 1 ) )
-			{
-				// checkImplyMultiply() places a * in the current index, so the
-				// i-- forces this char to be checked again and then it's
-				// treated as any operator is.
-				i--;
-			}
+			checkImplyMultiply( i + 1 );
 		}
 		/* ----- Variables ----- */
 		else if( isVariable( equation[i] )
@@ -285,10 +305,7 @@ string InfEquation::infixToPostfix()
 			pfEquation += ' ';
 			
 			// Check for implied multiplication
-			if( checkImplyMultiply( i + 1 ) )
-			{
-				i--;
-			}
+			checkImplyMultiply( i + 1 );
 		}
 		/* ----- Numbers ----- */
 		else if( isNumStart( equation[i] ) )
@@ -333,27 +350,7 @@ string InfEquation::infixToPostfix()
 			pfEquation += ' ';
 
 			// Check for implied multiplication
-			if( checkImplyMultiply( i + 1 ) )
-			{
-				i--;
-			}
-		}
-		/* ----- Operators ----- */
-		else if( isOperator( equation[i] ) )
-		{
-			// If any operators on the stack have a higher precedence than the
-			// current operator, place them in the postfix equation.
-//			cout << "[infToPf::Operators] Found an op: " << equation[i] << endl;
-			while( !opStack.empty()			 // Convert char to string
-				&& hasPrecedence( opStack.top(), string("") + equation[i] ) )
-			{
-				pfEquation += opStack.top();
-				pfEquation += ' ';
-				opStack.pop();
-			}
-
-			opStack.push( string("") + equation[i] );
-//			cout << "pfEquation: " << pfEquation << endl;
+			checkImplyMultiply( i + 1 );
 		}
 		/* ----- Functions ----- */
 		else if( isLetter( equation[i] ) )

@@ -55,8 +55,8 @@ private:
 			buffer.pop();
 		}   
 	}*/
-	
-	bool checkImplyMultiply( int startIndex );
+	bool implyMultiply = false;
+	void checkImplyMultiply( int startIndex );
 //	std::string equation;
 	
 //	void cleanup();
@@ -66,7 +66,6 @@ public:
 	InfEquation() { equation = ""; }
 	InfEquation( std::string equationIn ) { equation = equationIn; }
 	~InfEquation();
-
 
 	std::string infixToPostfix();
 //	void errorCheck();
@@ -85,7 +84,6 @@ public:
 	PfEquation() { equation = ""; }
 	PfEquation( std::string equationIn ) { equation = equationIn; }
 	~PfEquation();
-
 	
 	double solve( double x, bool &validResult );
 };
