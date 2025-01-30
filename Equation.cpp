@@ -193,31 +193,31 @@ InfEquation::~InfEquation()
 // checks the char again and treats it like any normal operator.
 void InfEquation::checkImplyMultiply( int startIndex )  // PRIVATE
 {
-	implyMultiply = false;
-	
-	// Skip spaces
-	char c = equation[startIndex];
-	int i = startIndex;
-	while( i < equation.length() && c == ' ' )
+	// Bounds check
+	if( startIndex < equation.size() )
 	{
-		i++;
-		
-		// Check for bounds
-		if( i >= equation.size() )
+		// Skip spaces
+		char c = equation[startIndex];
+		int i = startIndex;
+		while( i < equation.length() && c == ' ' )
 		{
-			return;
+			i++;
+			
+			// Check for bounds
+			if( i >= equation.size() )
+			{
+				return;
+			}
+
+			c = equation[i];
 		}
 
-		c = equation[i];
+		if( isNumStart( c ) || isLetter( c ) || c == '(' )
+		{
+			implyMultiply = true;
+			cout << "Implying multiplication\n";
+		}
 	}
-
-//	cout << "Does " << c << " imply multiplication? ";
-	if( isNumStart( c ) || isLetter( c ) || c == '(' )
-	{
-//		equation[startIndex - 1] = '*';
-		implyMultiply = true;
-	}
-//	cout << endl;
 }
 
 // Convert an equation from infix to postfix. Deals with spaces.
@@ -229,7 +229,7 @@ string InfEquation::infixToPostfix()
 	// Store result here
 	string pfEquation;
 
-	// Initiation (why?)
+	// Initiation
 	opStack.push( "(" );
 	equation += ')';
 
@@ -247,6 +247,7 @@ string InfEquation::infixToPostfix()
 			char op = equation[i];
 			if( implyMultiply )
 			{
+				cout << "[InfEquation] Implicit multiplication at " << i << "\n";
 				implyMultiply = false;
 				
 				op = '*';
@@ -362,7 +363,7 @@ string InfEquation::infixToPostfix()
 			// MAY CAUSE ISSUES IF VARIABLE IS CHANGED TO A LETTER THAT'S ALSO
 			// IN A MATH FUNCTION NAME
 			while( i < equation.length() && isLetter( equation[i] )
-				&& equation[i] != VARIABLE )
+				&& !isVariable( equation[i] ) )
 			{
 				funcLength++;
 				i++;
