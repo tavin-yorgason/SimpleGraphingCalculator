@@ -12,6 +12,7 @@
  ******************************************************************************/
 
 #include <iostream>
+#include <cmath>
 
 #include "Graph.hpp"
 
@@ -51,7 +52,7 @@ void Graph::scale( double multiplier )
 // Prints the graph
 void Graph::print()
 {
-	cout << "GRAPH\n";
+	cout << "Distance between tick marks: " << deltaTick << "\n";
 	for( int r = 0; r < GRAPH_HEIGHT; r++ )
 	{
 		for( int c = 0; c < GRAPH_WIDTH; c++ )
@@ -161,6 +162,29 @@ int Graph::yValToPos( double yVal )
 	yPos = GRAPH_HEIGHT / 2 - yPos;
 
 	return yPos;
+}
+
+// Converts a x value to its x position on the graph array
+int Graph::xValToPos( double xVal )
+{
+	// Scale to graph size
+	xVal *= ( (double) GRAPH_WIDTH / xScale );
+	
+	// Round to nearest int
+	int xPos;
+	if( xVal > 0 )  // positive
+	{
+		xPos = xVal + 0.5;
+	}
+	else            // negative
+	{
+		xPos = xVal - 0.5;
+	}
+
+	// Translate to correct position
+	xPos = xPos - GRAPH_WIDTH / 2;
+
+	return xPos;
 }
 
 // Plots a point on the graph given its indexes in the 2d array
@@ -293,5 +317,45 @@ void Graph::setupGraph()
 
 	// Center point
 	graph[ centerPt[1] ][ centerPt[0] ] = '+';
+
+	// Grid marks
+	// Update deltaTick (CHANGE TO HAVE deltaTickY AND deltaTickX)
+//	cout << "yScale / deltaTick: " << yScale / deltaTick << "\n";
+	while( yScale / deltaTick > 20 )
+	{
+		deltaTick *= 5;
+//		cout << "Changed deltaTick to: " << deltaTick << "\n";
+	}
+	while( yScale / deltaTick < 4 )
+	{
+		deltaTick *= 0.2;
+//		cout << "Changed deltaTick to: " << deltaTick << "\n";
+	}
+
+	// Y axis
+	double tickStart = -deltaTick * floor( (yScale / 2.0) / deltaTick );
+//	cout << "tickStart: " << tickStart << "\n";
+	for( double i = tickStart; i <= -tickStart; i += deltaTick )
+	{
+		if( isPtOnGraph( centerPt[0], yValToPos(i) ) )
+		{
+			graph[ yValToPos(i) ][ centerPt[0] ] = '+';
+			graph[ yValToPos(i) ][ centerPt[0] - 1 ] = '-';
+			graph[ yValToPos(i) ][ centerPt[0] + 1] = '-';
+		}
+	}
+	
+	// X axis
+	tickStart = -deltaTick * floor( (xScale / 2.0) / deltaTick );
+	for( double i = tickStart; i <= -tickStart; i += deltaTick )
+	{
+		if( isPtOnGraph( centerPt[0], yValToPos(i) ) )
+		{
+			// Don't ask me why this needs to be offset, I cannot figure it out
+			graph[ centerPt[1] + 1 ][ xValToPos(i) - 1 ] = '+';
+			graph[ centerPt[1] ][ xValToPos(i) - 1 ] = '|';
+			graph[ centerPt[1] + 2 ][ xValToPos(i) - 1 ] = '|';
+		}
+	}
 }
 

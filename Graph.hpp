@@ -26,9 +26,12 @@ private:
 	char graph[ GRAPH_HEIGHT ][ GRAPH_WIDTH ];
 	
 	// Scale
-	int yScale = 5;
-	int xScale = 5;
+	int yScale = 10;
+	int xScale = 10;
 
+	// Distance between ticks
+	double deltaTick = 1;
+	
 	// Translation
 	bool prevPtValid = false;
 	int prevPt[2];
@@ -46,7 +49,8 @@ private:
 
 	double xPosToValue( int xPos );
 	int yValToPos( double yVal );
-	
+	int xValToPos( double xVal );
+
 	void plotPt( int xInt, int yInt );
 	bool isPtOnGraph( int xInt, int yInt );
 	void genVertLines( int xInt, int yInt );
