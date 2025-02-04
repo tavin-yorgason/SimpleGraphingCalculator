@@ -247,7 +247,7 @@ string InfEquation::infixToPostfix()
 			char op = equation[i];
 			if( implyMultiply )
 			{
-				cout << "[InfEquation] Implicit multiplication at " << i << "\n";
+//				cout << "[InfEquation] Implicit multiplication at " << i << "\n";
 				implyMultiply = false;
 				
 				op = '*';
@@ -291,18 +291,18 @@ string InfEquation::infixToPostfix()
 			// Check for implied multiplication
 			checkImplyMultiply( i + 1 );
 		}
-		/* ----- Variables ----- */
-		else if( isVariable( equation[i] )
-			|| ( equation[i] == '~' && isVariable( equation[ i + 1 ] ) ) )
+		/* ----- Negative Sign ----- */
+		else if( equation[i] == '~' )
 		{
+			// Deals with negative number issues
+			pfEquation += "~1 ";
+			implyMultiply = true;
+		}
+		/* ----- Variables ----- */
+		else if( isVariable( equation[i] ) )
+		{
+			// Add variable to pfEquation
 			pfEquation += equation[i];
-			
-			if( equation[i] == '~' )
-			{
-				i++;
-				pfEquation += equation[i];
-			}
-
 			pfEquation += ' ';
 			
 			// Check for implied multiplication
@@ -314,13 +314,6 @@ string InfEquation::infixToPostfix()
 			// Used to prevent multiple periods in a number
 			bool hasPeriod = false;
 			
-			// Check if the number is negative (~ means negative)
-			if( equation[i] == '~' )
-			{
-				pfEquation += '~';
-				i++;
-			}
-
 			// Loop through the infix equation until the end of the number and
 			// store it in pfEquation.
 			while(
@@ -341,12 +334,6 @@ string InfEquation::infixToPostfix()
 				i++;
 			}
 			i--;
-
-			// Adds implied coefficient of one in case of ~(...)
-			if( equation[i] == '~' )
-			{
-				pfEquation += '1';
-			}
 
 			pfEquation += ' ';
 

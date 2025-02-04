@@ -26,13 +26,21 @@ Graph::Graph()
 }
 
 // Scales the graph and reprints it
-void Graph::scale( double multiplier )
+void Graph::zoom( double scalar, bool zoomTo )
 {
 	regraphing = true;
 
 	// Change scale and clear graph
-	xScale *= multiplier;
-	yScale *= multiplier;
+	if( zoomTo )
+	{
+		xScale = scalar * 2;
+		yScale = scalar * 2;
+	}
+	else
+	{
+		xScale *= scalar;
+		yScale *= scalar;
+	}
 	setupGraph();
 
 	// Replot all equations
@@ -321,12 +329,12 @@ void Graph::setupGraph()
 	// Grid marks
 	// Update deltaTick (CHANGE TO HAVE deltaTickY AND deltaTickX)
 //	cout << "yScale / deltaTick: " << yScale / deltaTick << "\n";
-	while( yScale / deltaTick > 20 )
+	while( yScale / deltaTick > (6-1)*5 )
 	{
 		deltaTick *= 5;
 //		cout << "Changed deltaTick to: " << deltaTick << "\n";
 	}
-	while( yScale / deltaTick < 4 )
+	while( yScale / deltaTick < 6 )
 	{
 		deltaTick *= 0.2;
 //		cout << "Changed deltaTick to: " << deltaTick << "\n";
@@ -341,7 +349,7 @@ void Graph::setupGraph()
 		{
 			graph[ yValToPos(i) ][ centerPt[0] ] = '+';
 			graph[ yValToPos(i) ][ centerPt[0] - 1 ] = '-';
-			graph[ yValToPos(i) ][ centerPt[0] + 1] = '-';
+			graph[ yValToPos(i) ][ centerPt[0] + 1 ] = '-';
 		}
 	}
 	

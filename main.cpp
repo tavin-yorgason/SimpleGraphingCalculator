@@ -90,10 +90,15 @@ int main()
 			graph.graphPfEquation( equation );
 			cout << "\n";
 		}
-		else if( inputLen > 6 && input.compare( 0, 6, "scale " ) == 0 )
+		else if( inputLen > 5 && input.compare( 0, 5, "zoom " ) == 0 )
 		{
-			double multiplier = stod( input.substr( 6, inputLen - 6 ) );
-			graph.scale( multiplier );
+			double multiplier = stod( input.substr( 5, inputLen - 5 ) );
+			graph.zoom( multiplier, false );
+		}
+		else if( inputLen > 7 && input.compare( 0, 7, "zoomto " ) == 0 )
+		{
+			double newScale = stod( input.substr( 7, inputLen - 7 ) );
+			graph.zoom( newScale, true );
 		}
 		else
 		{

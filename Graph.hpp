@@ -13,8 +13,8 @@
 #include "Equation.hpp"
 
 // Graph size
-const int GRAPH_WIDTH = 189; // in chars
-const int GRAPH_HEIGHT = 85; // in chars
+const int GRAPH_WIDTH = 205; // in chars
+const int GRAPH_HEIGHT = 93; // in chars
 
 const int MAX_EQUATIONS = 10;
 
@@ -60,7 +60,7 @@ private:
 public:
 	Graph();
 
-	void scale( double multiplier );
+	void zoom( double scalar, bool zoomTo );
 	void resetGraph();
 	void graphPfEquation( PfEquation equation );
 };
